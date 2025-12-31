@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spanish Speaking Practice - Tasks A, B & C</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            height: 90vh;
+            max-height: 800px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid #3498db;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            color: #bdc3c7;
+            font-size: 0.9rem;
+        }
+        
+        .task-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .task-btn {
+            padding: 8px 20px;
+            background: #34495e;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .task-btn.active {
+            background: #3498db;
+            transform: scale(1.05);
+        }
+        
+        .task-btn:hover:not(.active) {
+            background: #3d566e;
+        }
+        
+        .content-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .task-content {
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            display: none;
+        }
+        
+        .task-content.active {
+            display: block;
+        }
+        
+        .photo-container {
+            margin: 0 auto 30px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .photo-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f0f4ff 100%);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #a0b3d6;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .photo-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .question-area {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .question-number {
+            font-size: 0.9rem;
+            color: #3498db;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 600;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .translation-toggle {
+            margin: 10px 0 15px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .toggle-btn {
+            background: #95a5a6;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .toggle-btn:hover {
+            background: #7f8c8d;
+        }
+        
+        .toggle-btn.active {
+            background: #3498db;
+        }
+        
+        .translation {
+            font-size: 1rem;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .translation.show {
+            display: block;
+        }
+        
+        .question-type {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .timer {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 20px 0;
+        }
+        
+        .timer.running {
+            color: #e74c3c;
+        }
+        
+        .timer.finished {
+            color: #2ecc71;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .primary-btn {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .primary-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        .secondary-btn {
+            background: #e67e22;
+            color: white;
+        }
+        
+        .secondary-btn:hover {
+            background: #d35400;
+            transform: translateY(-2px);
+        }
+        
+        .speak-btn {
+            background: #3498db;
+            color: white;
+        }
+        
+        .speak-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .complete-btn {
+            background: #9b59b6;
+            color: white;
+        }
+        
+        .complete-btn:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+        }
+        
+        .section-info {
+            background: #e8f4fc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+            text-align: center;
+        }
+        
+        .section-info h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+        
+        .section-info p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .status-message {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2ecc71;
+            margin: 15px 0;
+            padding: 10px;
+            background: #e8f6f3;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                height: 95vh;
+                max-height: none;
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+            
+            .question-text {
+                font-size: 1.1rem;
+            }
+            
+            .timer {
+                font-size: 2rem;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>Spanish Speaking Practice</h1>
+            <p class="subtitle">IGCSE Speaking Exam Tasks A, B & C</p>
+            <div class="task-selector">
+                <button class="task-btn active" data-task="a">Task A</button>
+                <button class="task-btn" data-task="b">Task B</button>
+                <button class="task-btn" data-task="c">Task C</button>
+            </div>
+        </div>
+        
+        <div class="content-area">
+            <!-- Task A Content -->
+            <div class="task-content active" id="task-a">
+                <div class="photo-container">
+                    <div class="photo-placeholder">
+                        <img src="/photo.png" alt="Classroom exam scene" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 500 300%22><rect width=%22500%22 height=%22300%22 fill=%22%23e0e7ff%22/><text x=%2250%25%22 y=%2250%25%22 font-family=%22Arial%22 font-size=%2220%22 fill=%22%234a6fa5%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>Exam Cheating Scene</text></svg>'">
+                    </div>
+                </div>
+                
+                <div class="question-area">
+                    <div class="question-number" id="task-a-number">
+                        <i class="fas fa-question-circle"></i> Question 1 of 5
+                    </div>
+                    <div class="question-type">Task A: Picture-Based Response</div>
+                    <div class="question-text" id="task-a-question">
+                        Click "Next Question" to begin
+                    </div>
+                    
+                    <div class="translation-toggle">
+                        <button class="toggle-btn" data-task="a" id="task-a-translation-toggle">
+                            <i class="fas fa-language"></i> Show Translation
+                        </button>
+                    </div>
+                    
+                    <div class="translation" id="task-a-translation">
+                        Translation will appear here
+                    </div>
+                </div>
+                
+                <div class="timer" id="task-a-timer">0:00</div>
+                
+                <div class="controls">
+                    <button class="secondary-btn" id="task-a-next">
+                        <i class="fas fa-arrow-right"></i> Next Question
+                    </button>
+                    <button class="speak-btn" id="task-a-speak">
+                        <i class="fas fa-volume-up"></i> Speak Question
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Task B Content -->
+            <div class="task-content" id="task-b">
+                <div class="section-info">
+                    <h3>Task B - Section: <span id="task-b-section">A</span></h3>
+                    <p id="task-b-topic-detail">A1: Life in the town and rural life</p>
+                </div>
+                
+                <div class="question-area">
+                    <div class="question-type">Task B: General Conversation</div>
+                    <div class="question-text" id="task-b-question">
+                        Click "Next Question" to begin Task B
+                    </div>
+                    
+                    <div class="translation-toggle">
+                        <button class="toggle-btn" data-task="b" id="task-b-translation-toggle">
+                            <i class="fas fa-language"></i> Show Translation
+                        </button>
+                    </div>
+                    
+                    <div class="translation" id="task-b-translation">
+                        Translation will appear here
+                    </div>
+                </div>
+                
+                <div class="timer" id="task-b-timer">0:00</div>
+                <div class="status-message" id="task-b-finished">Task B Finished - 3:30 Complete!</div>
+                
+                <div class="controls">
+                    <button class="secondary-btn" id="task-b-next">
+                        <i class="fas fa-arrow-right"></i> Next Question
+                    </button>
+                    <button class="complete-btn" id="task-b-complete">
+                        <i class="fas fa-check"></i> I've Answered
+                    </button>
+                    <button class="speak-btn" id="task-b-speak">
+                        <i class="fas fa-volume-up"></i> Speak Question
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Task C Content -->
+            <div class="task-content" id="task-c">
+                <div class="section-info">
+                    <h3>Task C - Section: <span id="task-c-section">C</span></h3>
+                    <p id="task-c-topic-detail">C1: House and home</p>
+                </div>
+                
+                <div class="question-area">
+                    <div class="question-type">Task C: General Conversation</div>
+                    <div class="question-text" id="task-c-question">
+                        Click "Next Question" to begin Task C
+                    </div>
+                    
+                    <div class="translation-toggle">
+                        <button class="toggle-btn" data-task="c" id="task-c-translation-toggle">
+                            <i class="fas fa-language"></i> Show Translation
+                        </button>
+                    </div>
+                    
+                    <div class="translation" id="task-c-translation">
+                        Translation will appear here
+                    </div>
+                </div>
+                
+                <div class="timer" id="task-c-timer">0:00</div>
+                <div class="status-message" id="task-c-finished">Task C Finished - 3:30 Complete!</div>
+                
+                <div class="controls">
+                    <button class="secondary-btn" id="task-c-next">
+                        <i class="fas fa-arrow-right"></i> Next Question
+                    </button>
+                    <button class="complete-btn" id="task-c-complete">
+                        <i class="fas fa-check"></i> I've Answered
+                    </button>
+                    <button class="speak-btn" id="task-c-speak">
+                        <i class="fas fa-volume-up"></i> Speak Question
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Task A Question Sets
+        const taskAQuestionSets = {
+            1: [ // Question Type 1 - Describe everything EXCEPT cheating girl
+                { 
+                    question: "¿Qué hay en la foto?", 
+                    translation: "What is in the photo? (Describe everything except the cheating girl)" 
+                },
+                { 
+                    question: "¿Qué se puede ver en esa foto?", 
+                    translation: "What can be seen in that photo? (Describe everything except the cheating girl)" 
+                }
+            ],
+            2: [ // Question Type 2 - ONLY about the cheating girl
+                { 
+                    question: "¿Qué está haciendo la chica en rosa?", 
+                    translation: "What is the girl in pink doing?" 
+                },
+                { 
+                    question: "¿Qué lleva puesto la chica que hace trampa?", 
+                    translation: "What is the cheating girl wearing?" 
+                },
+                { 
+                    question: "¿Dónde está sentada la chica que hace trampa?", 
+                    translation: "Where is the cheating girl sitting?" 
+                }
+            ],
+            3: [ // Question Type 3
+                { 
+                    question: "¿Qué pasó antes de que la foto fuera sacada?", 
+                    translation: "What happened before the photo was taken?" 
+                },
+                { 
+                    question: "¿Qué pasará después de que la foto fuera sacada?", 
+                    translation: "What will happen after the photo was taken?" 
+                }
+            ],
+            4: [ // Question Type 4
+                { 
+                    question: "¿Qué piensas de hacer trampa en los exámenes?", 
+                    translation: "What do you think about cheating on exams?" 
+                },
+                { 
+                    question: "¿Qué opinas de las reglas escolares sobre el uso de móviles?", 
+                    translation: "What is your opinion on school rules about mobile phone use?" 
+                },
+                { 
+                    question: "¿Te gustaría tener menos presión en la escuela?", 
+                    translation: "Would you like to have less pressure at school?" 
+                },
+                { 
+                    question: "¿Crees que los exámenes son necesarios?", 
+                    translation: "Do you think exams are necessary?" 
+                }
+            ],
+            5: [ // Question Type 5
+                { 
+                    question: "¿Cuáles son las ventajas y las desventajas de los exámenes importantes?", 
+                    translation: "What are the advantages and disadvantages of important exams?" 
+                },
+                { 
+                    question: "¿Hasta qué punto la presión escolar afecta a los estudiantes?", 
+                    translation: "To what extent does school pressure affect students?" 
+                },
+                { 
+                    question: "¿Es más importante tener buenas notas o aprender de verdad?", 
+                    translation: "Is it more important to have good grades or to really learn?" 
+                },
+                { 
+                    question: "¿En qué medida prepara la escuela para la vida real?", 
+                    translation: "To what extent does school prepare for real life?" 
+                }
+            ]
+        };
+
+        // Task B & C Database
+        const topics = {
+            "A": {
+                "A1": {
+                    name: "Life in the town and rural life",
+                    questions: [
+                        { q: "¿Dónde vives?", t: "Where do you live?" },
+                        { q: "¿Qué hay en tu barrio?", t: "What is in your neighborhood?" },
+                        { q: "Describe tu barrio", t: "Describe your neighborhood" },
+                        { q: "¿Qué te gusta de tu barrio?", t: "What do you like about your neighborhood?" },
+                        { q: "¿Qué se puede hacer en tu barrio?", t: "What can you do in your neighborhood?" }
+                    ]
+                },
+                "A2": {
+                    name: "Holidays, tourist information and directions",
+                    questions: [
+                        { q: "¿Qué haces en verano?", t: "What do you do in summer?" },
+                        { q: "¿Dónde prefieres pasar las vacaciones? ¿Por qué?", t: "Where do you prefer to spend holidays? Why?" },
+                        { q: "¿Adónde fuiste de vacaciones el año pasado?", t: "Where did you go on holiday last year?" },
+                        { q: "¿Qué hiciste en tus últimas vacaciones?", t: "What did you do on your last holiday?" }
+                    ]
+                },
+                "A4": {
+                    name: "Every day life, traditions and communities",
+                    questions: [
+                        { q: "¿Qué sueles hacer entre semana?", t: "What do you usually do during the week?" },
+                        { q: "¿Qué hiciste el fin de semana pasado?", t: "What did you do last weekend?" },
+                        { q: "¿Qué vas a hacer este fin de semana?", t: "What are you going to do this weekend?" }
+                    ]
+                }
+            },
+            "C": {
+                "C1": {
+                    name: "House and home",
+                    questions: [
+                        { q: "¿Cómo es tu casa?", t: "What is your house like?" },
+                        { q: "¿Cómo sería tu casa ideal?", t: "What would your ideal house be like?" },
+                        { q: "¿Dónde vivías de pequeño/a?", t: "Where did you live when you were little?" }
+                    ]
+                },
+                "C2": {
+                    name: "Daily routines and helping at home",
+                    questions: [
+                        { q: "¿Cómo es tu rutina diaria?", t: "What is your daily routine?" },
+                        { q: "¿Qué haces para ayudar en casa?", t: "What do you do to help at home?" },
+                        { q: "¿Qué sueles hacer para ayudar en casa?", t: "What do you usually do to help at home?" }
+                    ]
+                },
+                "C4": {
+                    name: "Relationships with family and friends",
+                    questions: [
+                        { q: "¿Cuántas personas hay en tu familia?", t: "How many people are in your family?" },
+                        { q: "¿Cómo es tu mejor amigo/a?", t: "What is your best friend like?" },
+                        { q: "¿Te llevas bien con tus padres?", t: "Do you get along well with your parents?" }
+                    ]
+                }
+            },
+            "D": {
+                "D1": {
+                    name: "Environmental Issues",
+                    questions: [
+                        { q: "¿Cuáles son los problemas medioambientales más graves?", t: "What are the most serious environmental problems?" },
+                        { q: "¿Qué se puede hacer para proteger el medioambiente?", t: "What can be done to protect the environment?" },
+                        { q: "¿Qué podremos hacer para proteger el medioambiente?", t: "What will we be able to do to protect the environment?" }
+                    ]
+                },
+                "D3": {
+                    name: "Travel and Transport",
+                    questions: [
+                        { q: "¿Cómo sueles ir al insti?", t: "How do you usually go to school?" },
+                        { q: "¿Prefieres viajar en coche o en transporte público?", t: "Do you prefer to travel by car or public transport?" }
+                    ]
+                },
+                "D4": {
+                    name: "Technology",
+                    questions: [
+                        { q: "¿Con qué frecuencia usas la tecnología?", t: "How often do you use technology?" },
+                        { q: "¿Qué hiciste ayer con tu móvil?", t: "What did you do yesterday with your phone?" }
+                    ]
+                }
+            },
+            "E": {
+                "E1": {
+                    name: "Special occasions",
+                    questions: [
+                        { q: "¿Qué haces normalmente para celebrar tu cumpleaños?", t: "What do you normally do to celebrate your birthday?" },
+                        { q: "¿Qué vas a hacer para tu próximo cumpleaños?", t: "What are you going to do for your next birthday?" }
+                    ]
+                },
+                "E2": {
+                    name: "Hobbies, interests, sport and exercise",
+                    questions: [
+                        { q: "¿Qué te gusta hacer en tu tiempo libre?", t: "What do you like to do in your free time?" },
+                        { q: "¿Practicas algún deporte?", t: "Do you play any sports?" },
+                        { q: "¿Con qué frecuencia?", t: "How often?" }
+                    ]
+                },
+                "E3": {
+                    name: "Shopping and money matters",
+                    questions: [
+                        { q: "¿Dónde te gusta ir de compras?", t: "Where do you like to go shopping?" },
+                        { q: "¿Qué es lo bueno y lo malo de ir de compras?", t: "What is good and bad about going shopping?" }
+                    ]
+                },
+                "E5": {
+                    name: "Food and Drink",
+                    questions: [
+                        { q: "¿Cuál es tu comida favorita?", t: "What is your favorite food?" },
+                        { q: "¿Qué sueles desayunar?", t: "What do you usually have for breakfast?" },
+                        { q: "¿Llevas una dieta equilibrada?", t: "Do you have a balanced diet?" }
+                    ]
+                }
+            }
+        };
+
+        // State variables
+        let currentTask = 'a';
+        let taskAQuestionNumber = 0;
+        let taskACurrentQuestions = [];
+        let taskBSelectedSection = '';
+        let taskBSelectedSubtopic = '';
+        let taskBUsedQuestions = [];
+        let taskCSelectedSection = '';
+        let taskCSelectedSubtopic = '';
+        let taskCUsedQuestions = [];
+        let taskATimer = 0;
+        let taskBTimer = 0;
+        let taskCTimer = 0;
+        let taskAInterval = null;
+        let taskBInterval = null;
+        let taskCInterval = null;
+        let taskBFinished = false;
+        let taskCFinished = false;
+        let speechSynthesis = window.speechSynthesis;
+        let currentUtterance = null;
+
+        // DOM Elements
+        const taskABtns = document.querySelectorAll('.task-btn');
+        const taskContents = document.querySelectorAll('.task-content');
+        const taskAQuestion = document.getElementById('task-a-question');
+        const taskATranslation = document.getElementById('task-a-translation');
+        const taskATranslationToggle = document.getElementById('task-a-translation-toggle');
+        const taskANumber = document.getElementById('task-a-number');
+        const taskBQuestion = document.getElementById('task-b-question');
+        const taskBTranslation = document.getElementById('task-b-translation');
+        const taskBTranslationToggle = document.getElementById('task-b-translation-toggle');
+        const taskCQuestion = document.getElementById('task-c-question');
+        const taskCTranslation = document.getElementById('task-c-translation');
+        const taskCTranslationToggle = document.getElementById('task-c-translation-toggle');
+        const taskATimerEl = document.getElementById('task-a-timer');
+        const taskBTimerEl = document.getElementById('task-b-timer');
+        const taskCTimerEl = document.getElementById('task-c-timer');
+        const taskBFinishedEl = document.getElementById('task-b-finished');
+        const taskCFinishedEl = document.getElementById('task-c-finished');
+        const taskBSectionEl = document.getElementById('task-b-section');
+        const taskBTopicDetailEl = document.getElementById('task-b-topic-detail');
+        const taskCSectionEl = document.getElementById('task-c-section');
+        const taskCTopicDetailEl = document.getElementById('task-c-topic-detail');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            initializeTaskA();
+            selectTaskBTopic();
+            selectTaskCTopic();
+            startTaskATimer();
+        });
+
+        function setupEventListeners() {
+            // Task switching
+            taskABtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const task = btn.dataset.task;
+                    switchTask(task);
+                });
+            });
+
+            // Task A controls
+            document.getElementById('task-a-next').addEventListener('click', getNextTaskAQuestion);
+            document.getElementById('task-a-speak').addEventListener('click', () => speakText(taskAQuestion.textContent));
+            taskATranslationToggle.addEventListener('click', () => toggleTranslation('a'));
+
+            // Task B controls
+            document.getElementById('task-b-next').addEventListener('click', getNextTaskBQuestion);
+            document.getElementById('task-b-complete').addEventListener('click', completeTaskBQuestion);
+            document.getElementById('task-b-speak').addEventListener('click', () => speakText(taskBQuestion.textContent));
+            taskBTranslationToggle.addEventListener('click', () => toggleTranslation('b'));
+
+            // Task C controls
+            document.getElementById('task-c-next').addEventListener('click', getNextTaskCQuestion);
+            document.getElementById('task-c-complete').addEventListener('click', completeTaskCQuestion);
+            document.getElementById('task-c-speak').addEventListener('click', () => speakText(taskCQuestion.textContent));
+            taskCTranslationToggle.addEventListener('click', () => toggleTranslation('c'));
+        }
+
+        function switchTask(task) {
+            currentTask = task;
+            
+            // Update active button
+            taskABtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.task === task) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Update active content
+            taskContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === `task-${task}`) {
+                    content.classList.add('active');
+                }
+            });
+
+            // Start/stop timers based on task
+            if (task === 'a') {
+                startTaskATimer();
+                stopTaskBTimer();
+                stopTaskCTimer();
+            } else if (task === 'b') {
+                stopTaskATimer();
+                startTaskBTimer();
+            } else if (task === 'c') {
+                stopTaskATimer();
+                stopTaskBTimer();
+                startTaskCTimer();
+            }
+        }
+
+        // Translation toggle function for ALL tasks
+        function toggleTranslation(task) {
+            const translationEl = document.getElementById(`task-${task}-translation`);
+            const questionEl = document.getElementById(`task-${task}-question`);
+            const toggleBtn = document.getElementById(`task-${task}-translation-toggle`);
+            
+            if (translationEl.classList.contains('show')) {
+                // Hide translation, show question text
+                translationEl.classList.remove('show');
+                questionEl.style.display = 'flex';
+                toggleBtn.innerHTML = '<i class="fas fa-language"></i> Show Translation';
+                toggleBtn.classList.remove('active');
+            } else {
+                // Show translation, hide question text
+                translationEl.classList.add('show');
+                questionEl.style.display = 'none';
+                toggleBtn.innerHTML = '<i class="fas fa-language"></i> Hide Translation';
+                toggleBtn.classList.add('active');
+            }
+        }
+
+        // Task A Functions
+        function initializeTaskA() {
+            taskAQuestionNumber = 0;
+            taskACurrentQuestions = [];
+            
+            for (let i = 1; i <= 5; i++) {
+                const possibleQuestions = taskAQuestionSets[i];
+                const randomIndex = Math.floor(Math.random() * possibleQuestions.length);
+                taskACurrentQuestions.push({
+                    ...possibleQuestions[randomIndex],
+                    type: i
+                });
+            }
+            
+            showTaskAQuestion(0);
+        }
+
+        function showTaskAQuestion(index) {
+            if (index < taskACurrentQuestions.length) {
+                const question = taskACurrentQuestions[index];
+                taskAQuestion.textContent = question.question;
+                taskATranslation.textContent = question.translation;
+                
+                // Reset display: show Spanish question, hide translation
+                taskAQuestion.style.display = 'flex';
+                taskATranslation.classList.remove('show');
+                taskATranslationToggle.innerHTML = '<i class="fas fa-language"></i> Show Translation';
+                taskATranslationToggle.classList.remove('active');
+                
+                speakText(question.question);
+                
+                taskAQuestionNumber = index + 1;
+                taskANumber.innerHTML = `<i class="fas fa-question-circle"></i> Question ${taskAQuestionNumber} of 5`;
+            }
+        }
+
+        function getNextTaskAQuestion() {
+            const nextIndex = taskAQuestionNumber;
+            if (nextIndex < taskACurrentQuestions.length) {
+                showTaskAQuestion(nextIndex);
+            } else {
+                initializeTaskA();
+            }
+        }
+
+        // Task B Functions
+        function selectTaskBTopic() {
+            const availableSections = ['A', 'C', 'D', 'E'];
+            const randomSection = availableSections[Math.floor(Math.random() * availableSections.length)];
+            
+            const subtopics = Object.keys(topics[randomSection]);
+            const randomSubtopic = subtopics[Math.floor(Math.random() * subtopics.length)];
+            
+            taskBSelectedSection = randomSection;
+            taskBSelectedSubtopic = randomSubtopic;
+            
+            taskBSectionEl.textContent = taskBSelectedSection;
+            taskBTopicDetailEl.textContent = `${taskBSelectedSubtopic}: ${topics[randomSection][randomSubtopic].name}`;
+            
+            taskBUsedQuestions = [];
+            taskBFinished = false;
+            taskBFinishedEl.style.display = 'none';
+        }
+
+        function getNextTaskBQuestion() {
+            if (taskBFinished) return;
+            
+            const topicQuestions = topics[taskBSelectedSection][taskBSelectedSubtopic].questions;
+            
+            if (taskBUsedQuestions.length >= topicQuestions.length) {
+                taskBUsedQuestions = [];
+            }
+            
+            const availableQuestions = topicQuestions.filter((_, index) => !taskBUsedQuestions.includes(index));
+            
+            if (availableQuestions.length === 0) {
+                taskBUsedQuestions = [];
+                return getNextTaskBQuestion();
+            }
+            
+            const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+            const questionIndex = topicQuestions.indexOf(availableQuestions[randomIndex]);
+            
+            taskBUsedQuestions.push(questionIndex);
+            
+            taskBQuestion.textContent = topicQuestions[questionIndex].q;
+            taskBTranslation.textContent = topicQuestions[questionIndex].t;
+            
+            // Reset display: show Spanish question, hide translation
+            taskBQuestion.style.display = 'flex';
+            taskBTranslation.classList.remove('show');
+            taskBTranslationToggle.innerHTML = '<i class="fas fa-language"></i> Show Translation';
+            taskBTranslationToggle.classList.remove('active');
+            
+            speakText(topicQuestions[questionIndex].q);
+        }
+
+        function completeTaskBQuestion() {
+            getNextTaskBQuestion();
+        }
+
+        // Task C Functions
+        function selectTaskCTopic() {
+            const availableSections = ['C', 'D', 'E'];
+            
+            let randomSection;
+            do {
+                randomSection = availableSections[Math.floor(Math.random() * availableSections.length)];
+            } while (randomSection === taskBSelectedSection);
+            
+            const subtopics = Object.keys(topics[randomSection]);
+            const randomSubtopic = subtopics[Math.floor(Math.random() * subtopics.length)];
+            
+            taskCSelectedSection = randomSection;
+            taskCSelectedSubtopic = randomSubtopic;
+            
+            taskCSectionEl.textContent = taskCSelectedSection;
+            taskCTopicDetailEl.textContent = `${taskCSelectedSubtopic}: ${topics[randomSection][randomSubtopic].name}`;
+            
+            taskCUsedQuestions = [];
+            taskCFinished = false;
+            taskCFinishedEl.style.display = 'none';
+        }
+
+        function getNextTaskCQuestion() {
+            if (taskCFinished) return;
+            
+            const topicQuestions = topics[taskCSelectedSection][taskCSelectedSubtopic].questions;
+            
+            if (taskCUsedQuestions.length >= topicQuestions.length) {
+                taskCUsedQuestions = [];
+            }
+            
+            const availableQuestions = topicQuestions.filter((_, index) => !taskCUsedQuestions.includes(index));
+            
+            if (availableQuestions.length === 0) {
+                taskCUsedQuestions = [];
+                return getNextTaskCQuestion();
+            }
+            
+            const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+            const questionIndex = topicQuestions.indexOf(availableQuestions[randomIndex]);
+            
+            taskCUsedQuestions.push(questionIndex);
+            
+            taskCQuestion.textContent = topicQuestions[questionIndex].q;
+            taskCTranslation.textContent = topicQuestions[questionIndex].t;
+            
+            // Reset display: show Spanish question, hide translation
+            taskCQuestion.style.display = 'flex';
+            taskCTranslation.classList.remove('show');
+            taskCTranslationToggle.innerHTML = '<i class="fas fa-language"></i> Show Translation';
+            taskCTranslationToggle.classList.remove('active');
+            
+            speakText(topicQuestions[questionIndex].q);
+        }
+
+        function completeTaskCQuestion() {
+            getNextTaskCQuestion();
+        }
+
+        // Timer functions
+        function startTaskATimer() {
+            stopTaskATimer();
+            taskATimer = 0;
+            updateTaskATimerDisplay();
+            taskAInterval = setInterval(() => {
+                taskATimer++;
+                updateTaskATimerDisplay();
+            }, 1000);
+        }
+
+        function stopTaskATimer() {
+            if (taskAInterval) {
+                clearInterval(taskAInterval);
+                taskAInterval = null;
+            }
+        }
+
+        function startTaskBTimer() {
+            stopTaskBTimer();
+            taskBTimer = 0;
+            taskBFinished = false;
+            taskBFinishedEl.style.display = 'none';
+            taskBTimerEl.classList.remove('finished');
+            updateTaskBTimerDisplay();
+            
+            taskBTimerEl.classList.add('running');
+            taskBInterval = setInterval(() => {
+                taskBTimer++;
+                updateTaskBTimerDisplay();
+                
+                if (taskBTimer >= 210 && !taskBFinished) {
+                    taskBFinished = true;
+                    taskBFinishedEl.style.display = 'block';
+                    taskBTimerEl.classList.remove('running');
+                    taskBTimerEl.classList.add('finished');
+                    clearInterval(taskBInterval);
+                }
+                
+                if (taskBTimer === 180) {
+                    taskBTimerEl.style.color = '#e67e22';
+                }
+            }, 1000);
+        }
+
+        function stopTaskBTimer() {
+            if (taskBInterval) {
+                clearInterval(taskBInterval);
+                taskBInterval = null;
+            }
+            taskBTimerEl.classList.remove('running');
+            taskBTimerEl.style.color = '';
+        }
+
+        function startTaskCTimer() {
+            stopTaskCTimer();
+            taskCTimer = 0;
+            taskCFinished = false;
+            taskCFinishedEl.style.display = 'none';
+            taskCTimerEl.classList.remove('finished');
+            updateTaskCTimerDisplay();
+            
+            taskCTimerEl.classList.add('running');
+            taskCInterval = setInterval(() => {
+                taskCTimer++;
+                updateTaskCTimerDisplay();
+                
+                if (taskCTimer >= 210 && !taskCFinished) {
+                    taskCFinished = true;
+                    taskCFinishedEl.style.display = 'block';
+                    taskCTimerEl.classList.remove('running');
+                    taskCTimerEl.classList.add('finished');
+                    clearInterval(taskCInterval);
+                }
+                
+                if (taskBTimer + taskCTimer >= 400) {
+                    taskCTimerEl.style.color = '#e67e22';
+                }
+                
+                if (taskBTimer + taskCTimer >= 410) {
+                    taskCTimerEl.style.color = '#e74c3c';
+                }
+            }, 1000);
+        }
+
+        function stopTaskCTimer() {
+            if (taskCInterval) {
+                clearInterval(taskCInterval);
+                taskCInterval = null;
+            }
+            taskCTimerEl.classList.remove('running');
+            taskCTimerEl.style.color = '';
+        }
+
+        function updateTaskATimerDisplay() {
+            const minutes = Math.floor(taskATimer / 60);
+            const seconds = taskATimer % 60;
+            taskATimerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateTaskBTimerDisplay() {
+            const minutes = Math.floor(taskBTimer / 60);
+            const seconds = taskBTimer % 60;
+            taskBTimerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateTaskCTimerDisplay() {
+            const minutes = Math.floor(taskCTimer / 60);
+            const seconds = taskCTimer % 60;
+            taskCTimerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Speech functions
+        function speakText(text) {
+            stopSpeech();
+            
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            currentUtterance.lang = 'es-ES';
+            currentUtterance.rate = 0.9;
+            
+            speechSynthesis.speak(currentUtterance);
+        }
+
+        function stopSpeech() {
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+        }
+
+        // Stop speech when changing tasks
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                stopSpeech();
+            }
+        });
+    </script>
+</body>
+</html>
