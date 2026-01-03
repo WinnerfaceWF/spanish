@@ -52,11 +52,39 @@
             font-size: 0.9rem;
         }
         
+        .global-toggle {
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .global-toggle-btn {
+            background: #9b59b6;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .global-toggle-btn:hover {
+            background: #8e44ad;
+        }
+        
+        .global-toggle-btn.off {
+            background: #95a5a6;
+        }
+        
         .task-selector {
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 10px;
         }
         
         .task-btn {
@@ -317,6 +345,10 @@
             display: none;
         }
         
+        .text-hidden {
+            display: none !important;
+        }
+        
         @media (max-width: 768px) {
             .app-container {
                 height: 95vh;
@@ -348,6 +380,11 @@
         <div class="header">
             <h1>Spanish Speaking Practice</h1>
             <p class="subtitle">IGCSE Speaking Exam Tasks A, B & C</p>
+            <div class="global-toggle">
+                <button class="global-toggle-btn" id="global-text-toggle">
+                    <i class="fas fa-eye-slash"></i> Translations and Text: OFF
+                </button>
+            </div>
             <div class="task-selector">
                 <button class="task-btn active" data-task="a">Task A</button>
                 <button class="task-btn" data-task="b">Task B</button>
@@ -755,6 +792,7 @@
         let taskCInterval = null;
         let taskBFinished = false;
         let taskCFinished = false;
+        let textVisible = false; // Global text visibility state
         let speechSynthesis = window.speechSynthesis;
         let currentUtterance = null;
 
@@ -780,6 +818,7 @@
         const taskBTopicDetailEl = document.getElementById('task-b-topic-detail');
         const taskCSectionEl = document.getElementById('task-c-section');
         const taskCTopicDetailEl = document.getElementById('task-c-topic-detail');
+        const globalTextToggle = document.getElementById('global-text-toggle');
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -788,9 +827,13 @@
             selectTaskBTopic();
             selectTaskCTopic();
             startTaskATimer();
+            updateTextVisibility(); // Apply initial text visibility state
         });
 
         function setupEventListeners() {
+            // Global text toggle
+            globalTextToggle.addEventListener('click', toggleGlobalText);
+            
             // Task switching
             taskABtns.forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -815,6 +858,57 @@
             document.getElementById('task-c-complete').addEventListener('click', completeTaskCQuestion);
             document.getElementById('task-c-speak').addEventListener('click', () => speakText(taskCQuestion.textContent));
             taskCTranslationToggle.addEventListener('click', () => toggleTranslation('c'));
+        }
+
+        function toggleGlobalText() {
+            textVisible = !textVisible;
+            updateTextVisibility();
+            updateGlobalToggleButton();
+        }
+
+        function updateTextVisibility() {
+            // Get all elements that should be toggled
+            const questionElements = [
+                taskAQuestion, taskBQuestion, taskCQuestion,
+                taskATranslation, taskBTranslation, taskCTranslation
+            ];
+            
+            // Also get translation toggle buttons
+            const translationToggleButtons = [
+                taskATranslationToggle, taskBTranslationToggle, taskCTranslationToggle
+            ];
+            
+            if (textVisible) {
+                // Show text
+                questionElements.forEach(el => {
+                    if (el) el.classList.remove('text-hidden');
+                });
+                translationToggleButtons.forEach(el => {
+                    if (el) el.style.display = 'flex';
+                });
+            } else {
+                // Hide text
+                questionElements.forEach(el => {
+                    if (el) el.classList.add('text-hidden');
+                });
+                translationToggleButtons.forEach(el => {
+                    if (el) el.style.display = 'none';
+                });
+                // Also hide any visible translations
+                [taskATranslation, taskBTranslation, taskCTranslation].forEach(el => {
+                    if (el) el.classList.remove('show');
+                });
+            }
+        }
+
+        function updateGlobalToggleButton() {
+            if (textVisible) {
+                globalTextToggle.innerHTML = '<i class="fas fa-eye"></i> Translations and Text: ON';
+                globalTextToggle.classList.remove('off');
+            } else {
+                globalTextToggle.innerHTML = '<i class="fas fa-eye-slash"></i> Translations and Text: OFF';
+                globalTextToggle.classList.add('off');
+            }
         }
 
         function switchTask(task) {
@@ -860,13 +954,13 @@
             if (translationEl.classList.contains('show')) {
                 // Hide translation, show question text
                 translationEl.classList.remove('show');
-                questionEl.style.display = 'flex';
+                questionEl.classList.remove('text-hidden');
                 toggleBtn.innerHTML = '<i class="fas fa-language"></i> Show Translation';
                 toggleBtn.classList.remove('active');
             } else {
                 // Show translation, hide question text
                 translationEl.classList.add('show');
-                questionEl.style.display = 'none';
+                questionEl.classList.add('text-hidden');
                 toggleBtn.innerHTML = '<i class="fas fa-language"></i> Hide Translation';
                 toggleBtn.classList.add('active');
             }
@@ -895,11 +989,16 @@
                 taskAQuestion.textContent = question.question;
                 taskATranslation.textContent = question.translation;
                 
-                // Reset display: show Spanish question, hide translation
-                taskAQuestion.style.display = 'flex';
-                taskATranslation.classList.remove('show');
-                taskATranslationToggle.innerHTML = '<i class="fas fa-language"></i> Show Translation';
-                taskATranslationToggle.classList.remove('active');
+                // Reset display based on global text visibility
+                if (textVisible) {
+                    taskAQuestion.classList.remove('text-hidden');
+                    taskATranslation.classList.remove('show');
+                    taskATranslationToggle.innerHTML = '<i class="fas fa-language"></i> Show Translation';
+                    taskATranslationToggle.classList.remove('active');
+                } else {
+                    taskAQuestion.classList.add('text-hidden');
+                    taskATranslation.classList.remove('show');
+                }
                 
                 speakText(question.question);
                 
@@ -960,11 +1059,16 @@
             taskBQuestion.textContent = topicQuestions[questionIndex].q;
             taskBTranslation.textContent = topicQuestions[questionIndex].t;
             
-            // Reset display: show Spanish question, hide translation
-            taskBQuestion.style.display = 'flex';
-            taskBTranslation.classList.remove('show');
-            taskBTranslationToggle.innerHTML = '<i class="fas fa-language"></i> Show Translation';
-            taskBTranslationToggle.classList.remove('active');
+            // Reset display based on global text visibility
+            if (textVisible) {
+                taskBQuestion.classList.remove('text-hidden');
+                taskBTranslation.classList.remove('show');
+                taskBTranslationToggle.innerHTML = '<i class="fas fa-language"></i> Show Translation';
+                taskBTranslationToggle.classList.remove('active');
+            } else {
+                taskBQuestion.classList.add('text-hidden');
+                taskBTranslation.classList.remove('show');
+            }
             
             speakText(topicQuestions[questionIndex].q);
         }
@@ -1020,11 +1124,16 @@
             taskCQuestion.textContent = topicQuestions[questionIndex].q;
             taskCTranslation.textContent = topicQuestions[questionIndex].t;
             
-            // Reset display: show Spanish question, hide translation
-            taskCQuestion.style.display = 'flex';
-            taskCTranslation.classList.remove('show');
-            taskCTranslationToggle.innerHTML = '<i class="fas fa-language"></i> Show Translation';
-            taskCTranslationToggle.classList.remove('active');
+            // Reset display based on global text visibility
+            if (textVisible) {
+                taskCQuestion.classList.remove('text-hidden');
+                taskCTranslation.classList.remove('show');
+                taskCTranslationToggle.innerHTML = '<i class="fas fa-language"></i> Show Translation';
+                taskCTranslationToggle.classList.remove('active');
+            } else {
+                taskCQuestion.classList.add('text-hidden');
+                taskCTranslation.classList.remove('show');
+            }
             
             speakText(topicQuestions[questionIndex].q);
         }
