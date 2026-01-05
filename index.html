@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spanish Speaking Practice - Tasks A, B & C</title>
+    <title>Spanish Speaking Practice - Tasks A, B, C & Grind Mode</title>
     <style>
         * {
             margin: 0;
@@ -27,11 +27,38 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            height: 90vh;
-            max-height: 800px;
+            
+            height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
+        }
+        
+        .grind-mode-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .grind-mode-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+        
+        .grind-mode-btn.active {
+            background: #2ecc71;
         }
         
         .header {
@@ -314,6 +341,16 @@
             transform: translateY(-2px);
         }
         
+        .change-topic-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .change-topic-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
         .section-info {
             background: #e8f4fc;
             padding: 15px;
@@ -349,6 +386,71 @@
             display: none !important;
         }
         
+        .topic-selector {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .topic-selector h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .topic-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .topic-btn {
+            padding: 10px 20px;
+            background: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .topic-btn:hover {
+            background: #7f8c8d;
+        }
+        
+        .topic-btn.active {
+            background: #3498db;
+            transform: scale(1.05);
+        }
+        
+        .full-topic-btn {
+            background: #9b59b6;
+            font-weight: 700;
+        }
+        
+        .full-topic-btn:hover {
+            background: #8e44ad;
+        }
+        
+        .full-topic-btn.active {
+            background: #9b59b6;
+            transform: scale(1.05);
+        }
+        
+        .topic-section {
+            margin-bottom: 20px;
+        }
+        
+        .topic-section h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
         @media (max-width: 768px) {
             .app-container {
                 height: 95vh;
@@ -371,15 +473,35 @@
                 padding: 10px 15px;
                 font-size: 0.9rem;
             }
+            
+            .grind-mode-btn {
+                top: 10px;
+                right: 10px;
+                padding: 6px 15px;
+                font-size: 0.8rem;
+            }
+            
+            .topic-buttons {
+                gap: 8px;
+            }
+            
+            .topic-btn {
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="app-container">
+        <button class="grind-mode-btn" id="grind-mode-toggle">
+            <i class="fas fa-fire"></i> Grind Mode
+        </button>
+        
         <div class="header">
             <h1>Spanish Speaking Practice</h1>
-            <p class="subtitle">IGCSE Speaking Exam Tasks A, B & C</p>
+            <p class="subtitle">IGCSE Speaking Exam Tasks A, B, C & Grind Mode</p>
             <div class="global-toggle">
                 <button class="global-toggle-btn" id="global-text-toggle">
                     <i class="fas fa-eye-slash"></i> Translations and Text: OFF
@@ -389,6 +511,7 @@
                 <button class="task-btn active" data-task="a">Task A</button>
                 <button class="task-btn" data-task="b">Task B</button>
                 <button class="task-btn" data-task="c">Task C</button>
+                <button class="task-btn" data-task="grind">Grind Mode</button>
             </div>
         </div>
         
@@ -508,6 +631,51 @@
                         <i class="fas fa-check"></i> I've Answered
                     </button>
                     <button class="speak-btn" id="task-c-speak">
+                        <i class="fas fa-volume-up"></i> Speak Question
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Grind Mode Content -->
+            <div class="task-content" id="task-grind">
+                <div class="topic-selector">
+                    <h3>Select Topic for Grind Mode</h3>
+                    <p>Choose a specific subtopic or entire section to practice:</p>
+                    <div id="grind-topic-buttons">
+                        <!-- Topics will be generated here -->
+                    </div>
+                </div>
+                
+                <div class="section-info" id="grind-section-info" style="display: none;">
+                    <h3>Grind Mode - <span id="grind-mode-type">Subtopic</span>: <span id="grind-section">C</span></h3>
+                    <p id="grind-topic-detail">C1: House and home</p>
+                </div>
+                
+                <div class="question-area">
+                    <div class="question-type">Grind Mode: Focused Practice</div>
+                    <div class="question-text" id="grind-question">
+                        Select a topic above to begin grinding
+                    </div>
+                    
+                    <div class="translation-toggle">
+                        <button class="toggle-btn" data-task="grind" id="grind-translation-toggle">
+                            <i class="fas fa-language"></i> Show Translation
+                        </button>
+                    </div>
+                    
+                    <div class="translation" id="grind-translation">
+                        Translation will appear here
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="secondary-btn" id="grind-next">
+                        <i class="fas fa-random"></i> Next Random Question
+                    </button>
+                    <button class="change-topic-btn" id="grind-change-topic">
+                        <i class="fas fa-exchange-alt"></i> Change Topic
+                    </button>
+                    <button class="speak-btn" id="grind-speak">
                         <i class="fas fa-volume-up"></i> Speak Question
                     </button>
                 </div>
@@ -666,7 +834,7 @@
             ]
         };
 
-        // Task B & C Database
+        // Topics Database - UPDATED with your exact questions
         const topics = {
             "A": {
                 "A1": {
@@ -677,41 +845,37 @@
                         { q: "Describe tu barrio", t: "Describe your neighborhood" },
                         { q: "¿Qué te gusta de tu barrio?", t: "What do you like about your neighborhood?" },
                         { q: "¿Qué se puede hacer en tu barrio?", t: "What can you do in your neighborhood?" },
-                        { q: "¿Qué hiciste en tu barrio el fin de semana pasado?", t: "What did you do in your neighborhood last weekend?" },
+                        { q: "¿Qué hiciste en tu barrio?", t: "What did you do in your neighborhood?" },
                         { q: "¿Qué es lo bueno y lo malo de vivir en la ciudad?", t: "What is good and bad about living in the city?" },
-                        { q: "¿Qué harás mañana en tu barrio?", t: "What will you do tomorrow in your neighborhood?" },
+                        { q: "¿Qué harás/vas a hacer mañana?", t: "What will you do tomorrow?" },
                         { q: "¿Cómo era tu barrio en el pasado?", t: "What was your neighborhood like in the past?" },
-                        { q: "¿Cómo sería tu barrio ideal?", t: "What would your ideal neighborhood be like?" }
+                        { q: "¿Cómo sería tu barrio/ciudad ideal?", t: "What would your ideal neighborhood/city be like?" }
                     ]
                 },
                 "A2": {
                     name: "Holidays, tourist information and directions",
                     questions: [
-                        { q: "¿Qué haces normalmente en verano?", t: "What do you normally do in summer?" },
+                        { q: "¿Qué haces en verano?", t: "What do you do in summer?" },
                         { q: "¿Dónde prefieres pasar las vacaciones? ¿Por qué?", t: "Where do you prefer to spend holidays? Why?" },
-                        { q: "¿Adónde fuiste de vacaciones el año pasado?", t: "Where did you go on holiday last year?" },
-                        { q: "¿Qué hiciste en tus últimas vacaciones?", t: "What did you do on your last holiday?" },
-                        { q: "¿Dónde te alojaste durante tus vacaciones?", t: "Where did you stay during your holidays?" },
-                        { q: "¿Cómo era el hotel donde te alojaste?", t: "What was the hotel like where you stayed?" },
-                        { q: "¿Qué fue lo mejor y lo peor de tus vacaciones?", t: "What was the best and worst of your holidays?" },
+                        { q: "¿Cómo prefieres pasar las vacaciones? ¿Por qué?", t: "How do you prefer to spend holidays? Why?" },
+                        { q: "¿Adónde fuiste de vacaciones el año pasado/el mes pasado?", t: "Where did you go on holiday last year/last month?" },
+                        { q: "¿Qué hiciste?", t: "What did you do?" },
+                        { q: "¿Dónde te alojaste?", t: "Where did you stay?" },
+                        { q: "¿Cómo era el hotel?", t: "What was the hotel like?" },
+                        { q: "¿Qué fue lo mejor y lo peor de tus vacaciones? ¿Por qué?", t: "What was the best and worst of your holidays? Why?" },
                         { q: "¿Cómo serían tus vacaciones ideales?", t: "What would your ideal holidays be like?" },
-                        { q: "¿Adónde vas a ir de vacaciones el próximo verano?", t: "Where will you go on holiday next summer?" },
-                        { q: "¿Qué hiciste en tu último viaje a España?", t: "What did you do on your last trip to Spain?" }
+                        { q: "¿Adónde vas a ir de vacaciones el verano que viene?", t: "Where will you go on holiday next summer?" },
+                        { q: "¿Qué hiciste en tu último viaje a España? ¿Cuándo fuiste? ¿Cómo te fue? ¿Te gustaría volver en el futuro?", t: "What did you do on your last trip to Spain? When did you go? How was it? Would you like to return in the future?" }
                     ]
                 },
                 "A4": {
                     name: "Every day life, traditions and communities",
                     questions: [
+                        { q: "¿Has ido a alguna fiesta típica española?", t: "Have you been to any typical Spanish festival?" },
+                        { q: "¿Qué hiciste?", t: "What did you do?" },
                         { q: "¿Qué sueles hacer entre semana?", t: "What do you usually do during the week?" },
                         { q: "¿Qué hiciste el fin de semana pasado?", t: "What did you do last weekend?" },
-                        { q: "¿Qué vas a hacer este fin de semana?", t: "What are you going to do this weekend?" },
-                        { q: "¿Has ido a alguna fiesta típica española?", t: "Have you been to any typical Spanish festival?" },
-                        { q: "¿Qué hiciste en la última fiesta a la que fuiste?", t: "What did you do at the last party you went to?" },
-                        { q: "¿Cuál es tu día típico entre semana?", t: "What is your typical weekday like?" },
-                        { q: "¿Qué diferencias hay entre los días entre semana y el fin de semana?", t: "What differences are there between weekdays and weekends?" },
-                        { q: "¿Qué tradiciones familiares tienes?", t: "What family traditions do you have?" },
-                        { q: "¿Cómo celebras las fiestas importantes?", t: "How do you celebrate important holidays?" },
-                        { q: "¿Qué actividades haces con tu comunidad?", t: "What activities do you do with your community?" }
+                        { q: "¿Qué vas a hacer este fin de semana?", t: "What are you going to do this weekend?" }
                     ]
                 }
             },
@@ -721,14 +885,7 @@
                     questions: [
                         { q: "¿Cómo es tu casa?", t: "What is your house like?" },
                         { q: "¿Cómo sería tu casa ideal?", t: "What would your ideal house be like?" },
-                        { q: "¿Dónde vivías de pequeño/a?", t: "Where did you live when you were little?" },
-                        { q: "¿Qué hay en tu dormitorio?", t: "What is in your bedroom?" },
-                        { q: "¿Qué te gusta más de tu casa?", t: "What do you like most about your house?" },
-                        { q: "¿Qué cambiarías de tu casa?", t: "What would you change about your house?" },
-                        { q: "¿Prefieres vivir en una casa o en un piso?", t: "Do you prefer to live in a house or a flat?" },
-                        { q: "¿Cómo es el jardín o balcón de tu casa?", t: "What is the garden or balcony of your house like?" },
-                        { q: "¿Qué actividades haces en casa con tu familia?", t: "What activities do you do at home with your family?" },
-                        { q: "¿Cómo decoras tu habitación?", t: "How do you decorate your room?" }
+                        { q: "¿Dónde vivías de pequeño/a?", t: "Where did you live when you were little?" }
                     ]
                 },
                 "C2": {
@@ -736,29 +893,17 @@
                     questions: [
                         { q: "¿Cómo es tu rutina diaria?", t: "What is your daily routine?" },
                         { q: "¿Qué haces para ayudar en casa?", t: "What do you do to help at home?" },
-                        { q: "¿Qué sueles hacer para ayudar en casa?", t: "What do you usually do to help at home?" },
-                        { q: "¿Qué hiciste ayer para ayudar en casa?", t: "What did you do yesterday to help at home?" },
-                        { q: "¿A qué hora te levantas normalmente?", t: "What time do you normally get up?" },
-                        { q: "¿Qué haces por la mañana antes de ir al colegio?", t: "What do you do in the morning before going to school?" },
-                        { q: "¿Qué haces por la tarde después del colegio?", t: "What do you do in the afternoon after school?" },
-                        { q: "¿Cómo es tu rutina de la noche?", t: "What is your evening routine like?" },
-                        { q: "¿Qué tareas domésticas haces regularmente?", t: "What household chores do you do regularly?" },
-                        { q: "¿Quién hace la mayoría de las tareas en tu casa?", t: "Who does most of the chores in your house?" }
+                        { q: "¿Qué sueles/tienes que hacer para ayudar en casa?", t: "What do you usually/have to do to help at home?" },
+                        { q: "¿Qué hiciste ayer para ayudar?", t: "What did you do yesterday to help?" }
                     ]
                 },
                 "C4": {
                     name: "Relationships with family and friends",
                     questions: [
                         { q: "¿Cuántas personas hay en tu familia?", t: "How many people are in your family?" },
-                        { q: "¿Cómo es tu mejor amigo/a?", t: "What is your best friend like?" },
-                        { q: "¿Te llevas bien con tus padres?", t: "Do you get along well with your parents?" },
-                        { q: "¿Qué haces normalmente con tus amigos?", t: "What do you normally do with your friends?" },
-                        { q: "¿Cómo es tu relación con tus hermanos?", t: "What is your relationship with your siblings like?" },
-                        { q: "¿Qué características tiene un buen amigo?", t: "What characteristics does a good friend have?" },
-                        { q: "¿Qué hiciste con tus amigos el fin de semana pasado?", t: "What did you do with your friends last weekend?" },
-                        { q: "¿Cómo conociste a tu mejor amigo?", t: "How did you meet your best friend?" },
-                        { q: "¿Qué planes tienes con tu familia este fin de semana?", t: "What plans do you have with your family this weekend?" },
-                        { q: "¿Prefieres pasar tiempo con familia o amigos?", t: "Do you prefer to spend time with family or friends?" }
+                        { q: "¿Cómo es tu padre/madre/hermano/hermana/mejor amigo…?", t: "What is your father/mother/brother/sister/best friend like?" },
+                        { q: "En tu opinión, ¿Cuáles son las características de un buen amigo?", t: "In your opinion, what are the characteristics of a good friend?" },
+                        { q: "¿Te llevas bien con tus padres?", t: "Do you get along well with your parents?" }
                     ]
                 }
             },
@@ -767,45 +912,26 @@
                     name: "Environmental Issues",
                     questions: [
                         { q: "¿Cuáles son los problemas medioambientales más graves?", t: "What are the most serious environmental problems?" },
+                        { q: "¿Cuáles serán las consecuencias?", t: "What will be the consequences?" },
                         { q: "¿Qué se puede hacer para proteger el medioambiente?", t: "What can be done to protect the environment?" },
-                        { q: "¿Qué podremos hacer para proteger el medioambiente?", t: "What will we be able to do to protect the environment?" },
-                        { q: "¿Qué haces tú para cuidar el medioambiente?", t: "What do you do to take care of the environment?" },
-                        { q: "¿Crees que el cambio climático es un problema grave?", t: "Do you think climate change is a serious problem?" },
-                        { q: "¿Qué consecuencias tendrá la contaminación en el futuro?", t: "What consequences will pollution have in the future?" },
-                        { q: "¿Cómo podemos reducir el uso de plástico?", t: "How can we reduce plastic use?" },
-                        { q: "¿Qué piensas del reciclaje?", t: "What do you think about recycling?" },
-                        { q: "¿Es importante enseñar sobre el medioambiente en las escuelas?", t: "Is it important to teach about the environment in schools?" },
-                        { q: "¿Qué pueden hacer los gobiernos para proteger el medioambiente?", t: "What can governments do to protect the environment?" }
+                        { q: "¿Qué podremos hacer para proteger el medioambiente?", t: "What will we be able to do to protect the environment?" }
                     ]
                 },
                 "D3": {
                     name: "Travel and Transport",
                     questions: [
-                        { q: "¿Cómo sueles ir al insti?", t: "How do you usually go to school?" },
-                        { q: "¿Prefieres viajar en coche o en transporte público?", t: "Do you prefer to travel by car or public transport?" },
-                        { q: "¿Qué medio de transporte usas más?", t: "What means of transport do you use most?" },
-                        { q: "¿Has viajado en avión alguna vez?", t: "Have you ever travelled by plane?" },
-                        { q: "¿Qué ventajas tiene el transporte público?", t: "What advantages does public transport have?" },
-                        { q: "¿Crees que es importante usar la bicicleta?", t: "Do you think it's important to use a bicycle?" },
-                        { q: "¿Qué problemas hay con el tráfico en tu ciudad?", t: "What traffic problems are there in your city?" },
-                        { q: "¿Cómo serán los coches del futuro?", t: "What will cars of the future be like?" },
-                        { q: "¿Prefieres viajar en tren o en autobús?", t: "Do you prefer to travel by train or bus?" },
-                        { q: "¿Qué haces durante un viaje largo?", t: "What do you do during a long journey?" }
+                        { q: "¿Cómo sueles ir al insti?", t: "How do you usually go to school?" }
                     ]
                 },
                 "D4": {
                     name: "Technology",
                     questions: [
                         { q: "¿Con qué frecuencia usas la tecnología?", t: "How often do you use technology?" },
-                        { q: "¿Qué hiciste ayer con tu móvil?", t: "What did you do yesterday with your phone?" },
-                        { q: "¿Cómo usas tu móvil normalmente?", t: "How do you normally use your phone?" },
+                        { q: "¿Qué hiciste ayer con tu móvil/ordenador?", t: "What did you do yesterday with your phone/computer?" },
+                        { q: "¿Cómo usas tu móvil?", t: "How do you use your phone?" },
                         { q: "¿Qué hiciste ayer en las redes sociales?", t: "What did you do yesterday on social media?" },
-                        { q: "¿Cuáles son las ventajas y desventajas de las nuevas tecnologías?", t: "What are the advantages and disadvantages of new technologies?" },
-                        { q: "¿Cómo era tener un móvil cuando eras más joven?", t: "What was it like having a mobile phone when you were younger?" },
-                        { q: "¿Qué aplicaciones usas más?", t: "Which applications do you use most?" },
-                        { q: "¿Crees que usamos demasiado la tecnología?", t: "Do you think we use too much technology?" },
-                        { q: "¿Qué tecnología nueva te gustaría tener?", t: "What new technology would you like to have?" },
-                        { q: "¿Cómo ayuda la tecnología en los estudios?", t: "How does technology help with studies?" }
+                        { q: "¿Cómo era tener un móvil cuando eras joven?", t: "What was it like having a mobile phone when you were young?" },
+                        { q: "¿Cuáles son las ventajas y desventajas de las nuevas tecnologías?", t: "What are the advantages and disadvantages of new technologies?" }
                     ]
                 }
             },
@@ -814,30 +940,23 @@
                     name: "Special occasions",
                     questions: [
                         { q: "¿Qué haces normalmente para celebrar tu cumpleaños?", t: "What do you normally do to celebrate your birthday?" },
+                        { q: "Háblame de un cumpleaños al que fuiste recientemente", t: "Tell me about a birthday you went to recently" },
                         { q: "¿Qué vas a hacer para tu próximo cumpleaños?", t: "What are you going to do for your next birthday?" },
-                        { q: "¿Conoces alguna fiesta española?", t: "Do you know any Spanish festival?" },
-                        { q: "¿Qué hiciste en tu último cumpleaños?", t: "What did you do on your last birthday?" },
-                        { q: "¿Cómo celebras Navidad con tu familia?", t: "How do you celebrate Christmas with your family?" },
-                        { q: "¿Qué regalos te gustan recibir?", t: "What gifts do you like to receive?" },
-                        { q: "¿Prefieres fiestas grandes o pequeñas?", t: "Do you prefer big or small parties?" },
-                        { q: "¿Qué comida especial preparas para las fiestas?", t: "What special food do you prepare for parties?" },
-                        { q: "¿Cómo celebras el Año Nuevo?", t: "How do you celebrate New Year?" },
-                        { q: "¿Qué fiesta te gusta más y por qué?", t: "Which party do you like most and why?" }
+                        { q: "¿Conoces alguna fiesta española?", t: "Do you know any Spanish festival?" }
                     ]
                 },
                 "E2": {
-                    name: "Hobbies, interests, sport and exercise",
+                    name: "Hobbies interests, sport and exercise",
                     questions: [
-                        { q: "¿Qué te gusta hacer en tu tiempo libre?", t: "What do you like to do in your free time?" },
-                        { q: "¿Practicas algún deporte?", t: "Do you play any sports?" },
-                        { q: "¿Con qué frecuencia?", t: "How often?" },
-                        { q: "¿Qué hacías cuando eras niño en tu tiempo libre?", t: "What did you do in your free time when you were a child?" },
                         { q: "¿Qué te gusta leer?", t: "What do you like to read?" },
+                        { q: "¿Con qué frecuencia lees?", t: "How often do you read?" },
+                        { q: "¿Cuáles son las ventajas de leer libros en formato digital?", t: "What are the advantages of reading books in digital format?" },
+                        { q: "¿Cómo prefieres leer libros? (¿Prefieres leer libros en papel o en una aplicación en tu móvil?)", t: "How do you prefer to read books? (Do you prefer to read paper books or in an app on your phone?)" },
                         { q: "¿Cuál fue el último libro que leíste?", t: "What was the last book you read?" },
-                        { q: "¿Prefieres leer libros en papel o digitales?", t: "Do you prefer to read paper or digital books?" },
-                        { q: "¿Qué deporte te gusta ver?", t: "What sport do you like to watch?" },
-                        { q: "¿Qué instrumento musical tocas o te gustaría tocar?", t: "What musical instrument do you play or would like to play?" },
-                        { q: "¿Qué películas o series te gustan?", t: "What films or series do you like?" }
+                        { q: "¿Qué te gusta hacer en tu tiempo libre?", t: "What do you like to do in your free time?" },
+                        { q: "¿Qué haces en tu tiempo libre?", t: "What do you do in your free time?" },
+                        { q: "¿Qué hacías cuando eras niño?", t: "What did you do when you were a child?" },
+                        { q: "¿Practicas algún deporte? ¿Con qué frecuencia?", t: "Do you play any sports? How often?" }
                     ]
                 },
                 "E3": {
@@ -845,14 +964,7 @@
                     questions: [
                         { q: "¿Dónde te gusta ir de compras?", t: "Where do you like to go shopping?" },
                         { q: "¿Qué es lo bueno y lo malo de ir de compras?", t: "What is good and bad about going shopping?" },
-                        { q: "¿Qué recuerdos compraste en tus últimas vacaciones?", t: "What souvenirs did you buy on your last holidays?" },
-                        { q: "¿Qué comprarás en tus próximas vacaciones?", t: "What will you buy on your next holidays?" },
-                        { q: "¿Prefieres comprar en tiendas físicas o online?", t: "Do you prefer to buy in physical stores or online?" },
-                        { q: "¿Qué tipo de ropa te gusta comprar?", t: "What type of clothes do you like to buy?" },
-                        { q: "¿Cómo ahorras dinero?", t: "How do you save money?" },
-                        { q: "¿Qué es más importante para ti: calidad o precio?", t: "What is more important for you: quality or price?" },
-                        { q: "¿Qué compraste la última vez que fuiste de compras?", t: "What did you buy the last time you went shopping?" },
-                        { q: "¿Crees que gastamos demasiado dinero en cosas innecesarias?", t: "Do you think we spend too much money on unnecessary things?" }
+                        { q: "¿Qué recuerdos compraste/comprarás en tus vacaciones?", t: "What souvenirs did you buy/will you buy on your holidays?" }
                     ]
                 },
                 "E5": {
@@ -860,14 +972,13 @@
                     questions: [
                         { q: "¿Cuál es tu comida favorita?", t: "What is your favorite food?" },
                         { q: "¿Qué sueles desayunar?", t: "What do you usually have for breakfast?" },
-                        { q: "¿Llevas una dieta equilibrada?", t: "Do you have a balanced diet?" },
                         { q: "¿Qué sueles almorzar?", t: "What do you usually have for lunch?" },
                         { q: "¿Qué sueles cenar?", t: "What do you usually have for dinner?" },
-                        { q: "¿Qué sueles beber durante el día?", t: "What do you usually drink during the day?" },
-                        { q: "¿Cuál es la comida más importante del día?", t: "What is the most important meal of the day?" },
+                        { q: "¿Qué sueles beber?", t: "What do you usually drink?" },
+                        { q: "¿Cuál es la comida más importante del día? ¿Por qué?", t: "What is the most important meal of the day? Why?" },
                         { q: "¿Qué vas a comer hoy?", t: "What are you going to eat today?" },
-                        { q: "¿Seguías una dieta equilibrada cuando eras niño?", t: "Did you follow a balanced diet when you were a child?" },
-                        { q: "¿Qué comida española te gusta más?", t: "Which Spanish food do you like most?" }
+                        { q: "¿Llevas una dieta equilibrada? ¿Por qué?", t: "Do you have a balanced diet? Why?" },
+                        { q: "¿Seguías una dieta equilibrada cuando eras niño?", t: "Did you follow a balanced diet when you were a child?" }
                     ]
                 }
             }
@@ -892,6 +1003,14 @@
         let taskBFinished = false;
         let taskCFinished = false;
         let textVisible = false;
+        
+        // Grind Mode variables
+        let grindSelectedSection = '';
+        let grindSelectedSubtopic = '';
+        let grindModeType = 'subtopic'; // 'subtopic' or 'full-section'
+        let grindUsedQuestions = [];
+        let grindAllQuestions = [];
+        
         let speechSynthesis = window.speechSynthesis;
         let currentUtterance = null;
 
@@ -918,6 +1037,20 @@
         const taskCSectionEl = document.getElementById('task-c-section');
         const taskCTopicDetailEl = document.getElementById('task-c-topic-detail');
         const globalTextToggle = document.getElementById('global-text-toggle');
+        const grindModeToggle = document.getElementById('grind-mode-toggle');
+        
+        // Grind Mode elements
+        const grindTopicButtons = document.getElementById('grind-topic-buttons');
+        const grindSectionInfo = document.getElementById('grind-section-info');
+        const grindSectionEl = document.getElementById('grind-section');
+        const grindTopicDetailEl = document.getElementById('grind-topic-detail');
+        const grindModeTypeEl = document.getElementById('grind-mode-type');
+        const grindQuestion = document.getElementById('grind-question');
+        const grindTranslation = document.getElementById('grind-translation');
+        const grindTranslationToggle = document.getElementById('grind-translation-toggle');
+        const grindNextBtn = document.getElementById('grind-next');
+        const grindChangeTopicBtn = document.getElementById('grind-change-topic');
+        const grindSpeakBtn = document.getElementById('grind-speak');
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -925,6 +1058,7 @@
             initializeTaskA();
             selectTaskBTopic();
             selectTaskCTopic();
+            initializeGrindMode();
             startTaskATimer();
             updateTextVisibility();
         });
@@ -957,6 +1091,12 @@
             document.getElementById('task-c-complete').addEventListener('click', completeTaskCQuestion);
             document.getElementById('task-c-speak').addEventListener('click', () => speakText(taskCQuestion.textContent));
             taskCTranslationToggle.addEventListener('click', () => toggleTranslation('c'));
+            
+            // Grind Mode controls
+            grindNextBtn.addEventListener('click', getNextGrindQuestion);
+            grindChangeTopicBtn.addEventListener('click', showGrindTopicSelector);
+            grindSpeakBtn.addEventListener('click', () => speakText(grindQuestion.textContent));
+            grindTranslationToggle.addEventListener('click', () => toggleTranslation('grind'));
         }
 
         function toggleGlobalText() {
@@ -967,12 +1107,12 @@
 
         function updateTextVisibility() {
             const questionElements = [
-                taskAQuestion, taskBQuestion, taskCQuestion,
-                taskATranslation, taskBTranslation, taskCTranslation
+                taskAQuestion, taskBQuestion, taskCQuestion, grindQuestion,
+                taskATranslation, taskBTranslation, taskCTranslation, grindTranslation
             ];
             
             const translationToggleButtons = [
-                taskATranslationToggle, taskBTranslationToggle, taskCTranslationToggle
+                taskATranslationToggle, taskBTranslationToggle, taskCTranslationToggle, grindTranslationToggle
             ];
             
             if (textVisible) {
@@ -989,7 +1129,7 @@
                 translationToggleButtons.forEach(el => {
                     if (el) el.style.display = 'none';
                 });
-                [taskATranslation, taskBTranslation, taskCTranslation].forEach(el => {
+                [taskATranslation, taskBTranslation, taskCTranslation, grindTranslation].forEach(el => {
                     if (el) el.classList.remove('show');
                 });
             }
@@ -1033,6 +1173,10 @@
                 stopTaskATimer();
                 stopTaskBTimer();
                 startTaskCTimer();
+            } else if (task === 'grind') {
+                stopTaskATimer();
+                stopTaskBTimer();
+                stopTaskCTimer();
             }
         }
 
@@ -1054,6 +1198,152 @@
             }
         }
 
+        // Initialize Grind Mode
+        function initializeGrindMode() {
+            // Generate topic buttons (ALL topics A-E except B)
+            grindTopicButtons.innerHTML = '';
+            
+            // Sections A, C, D, E (excluding B)
+            const grindSections = ['A', 'C', 'D', 'E'];
+            
+            grindSections.forEach(section => {
+                // Add full section button
+                const fullSectionBtn = document.createElement('button');
+                fullSectionBtn.className = 'topic-btn full-topic-btn';
+                fullSectionBtn.dataset.section = section;
+                fullSectionBtn.dataset.type = 'full-section';
+                fullSectionBtn.textContent = `FULL SECTION ${section}: All Topics`;
+                fullSectionBtn.addEventListener('click', () => selectGrindFullSection(section));
+                grindTopicButtons.appendChild(fullSectionBtn);
+                
+                // Add individual subtopic buttons
+                const subtopics = Object.keys(topics[section]);
+                if (subtopics.length > 0) {
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.className = 'topic-section';
+                    const sectionTitle = document.createElement('h4');
+                    sectionTitle.textContent = `Section ${section} Subtopics:`;
+                    sectionDiv.appendChild(sectionTitle);
+                    
+                    const subtopicButtons = document.createElement('div');
+                    subtopicButtons.className = 'topic-buttons';
+                    
+                    subtopics.forEach(subtopic => {
+                        const button = document.createElement('button');
+                        button.className = 'topic-btn';
+                        button.dataset.section = section;
+                        button.dataset.subtopic = subtopic;
+                        button.dataset.type = 'subtopic';
+                        button.textContent = `${section}${subtopic}: ${topics[section][subtopic].name}`;
+                        button.addEventListener('click', () => selectGrindSubtopic(section, subtopic));
+                        subtopicButtons.appendChild(button);
+                    });
+                    
+                    sectionDiv.appendChild(subtopicButtons);
+                    grindTopicButtons.appendChild(sectionDiv);
+                }
+            });
+        }
+
+        function selectGrindSubtopic(section, subtopic) {
+            grindSelectedSection = section;
+            grindSelectedSubtopic = subtopic;
+            grindModeType = 'subtopic';
+            grindUsedQuestions = [];
+            grindAllQuestions = [];
+            
+            // Update display
+            grindModeTypeEl.textContent = 'Subtopic';
+            grindSectionEl.textContent = section;
+            grindTopicDetailEl.textContent = `${subtopic}: ${topics[section][subtopic].name}`;
+            grindSectionInfo.style.display = 'block';
+            
+            // Hide topic selector
+            document.querySelector('.topic-selector').style.display = 'none';
+            
+            // Get first question
+            getNextGrindQuestion();
+        }
+
+        function selectGrindFullSection(section) {
+            grindSelectedSection = section;
+            grindSelectedSubtopic = '';
+            grindModeType = 'full-section';
+            grindUsedQuestions = [];
+            grindAllQuestions = [];
+            
+            // Collect all questions from all subtopics in this section
+            const subtopics = Object.keys(topics[section]);
+            subtopics.forEach(subtopic => {
+                grindAllQuestions = grindAllQuestions.concat(topics[section][subtopic].questions);
+            });
+            
+            // Update display
+            grindModeTypeEl.textContent = 'Full Section';
+            grindSectionEl.textContent = section;
+            grindTopicDetailEl.textContent = `All ${subtopics.length} subtopics (${grindAllQuestions.length} questions total)`;
+            grindSectionInfo.style.display = 'block';
+            
+            // Hide topic selector
+            document.querySelector('.topic-selector').style.display = 'none';
+            
+            // Get first question
+            getNextGrindQuestion();
+        }
+
+        function showGrindTopicSelector() {
+            document.querySelector('.topic-selector').style.display = 'block';
+            grindSectionInfo.style.display = 'none';
+            grindQuestion.textContent = "Select a topic above to begin grinding";
+            grindTranslation.textContent = "";
+        }
+
+        function getNextGrindQuestion() {
+            if (!grindSelectedSection) {
+                showGrindTopicSelector();
+                return;
+            }
+            
+            let questions;
+            if (grindModeType === 'subtopic') {
+                questions = topics[grindSelectedSection][grindSelectedSubtopic].questions;
+            } else {
+                questions = grindAllQuestions;
+            }
+            
+            if (grindUsedQuestions.length >= questions.length) {
+                grindUsedQuestions = [];
+            }
+            
+            const availableQuestions = questions.filter((_, index) => !grindUsedQuestions.includes(index));
+            
+            if (availableQuestions.length === 0) {
+                grindUsedQuestions = [];
+                return getNextGrindQuestion();
+            }
+            
+            const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+            const questionIndex = questions.indexOf(availableQuestions[randomIndex]);
+            
+            grindUsedQuestions.push(questionIndex);
+            
+            grindQuestion.textContent = questions[questionIndex].q;
+            grindTranslation.textContent = questions[questionIndex].t;
+            
+            if (textVisible) {
+                grindQuestion.classList.remove('text-hidden');
+                grindTranslation.classList.remove('show');
+                grindTranslationToggle.innerHTML = '<i class="fas fa-language"></i> Show Translation';
+                grindTranslationToggle.classList.remove('active');
+            } else {
+                grindQuestion.classList.add('text-hidden');
+                grindTranslation.classList.remove('show');
+            }
+            
+            speakText(questions[questionIndex].q);
+        }
+
+        // Existing Task A, B, C functions remain the same
         function initializeTaskA() {
             taskAQuestionNumber = 0;
             taskACurrentQuestions = [];
