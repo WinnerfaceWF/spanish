@@ -27,7 +27,7 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            
+            overflow: hidden;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -560,7 +560,7 @@
             <div class="task-content" id="task-b">
                 <div class="section-info">
                     <h3>Task B - Section: <span id="task-b-section">A</span></h3>
-                    <p id="task-b-topic-detail">A1: Life in the town and rural life</p>
+                    <p id="task-b-topic-detail">A: All Topics (10 questions)</p>
                 </div>
                 
                 <div class="question-area">
@@ -600,7 +600,7 @@
             <div class="task-content" id="task-c">
                 <div class="section-info">
                     <h3>Task C - Section: <span id="task-c-section">C</span></h3>
-                    <p id="task-c-topic-detail">C1: House and home</p>
+                    <p id="task-c-topic-detail">C: All Topics (6 questions)</p>
                 </div>
                 
                 <div class="question-area">
@@ -989,10 +989,10 @@
         let taskAQuestionNumber = 0;
         let taskACurrentQuestions = [];
         let taskBSelectedSection = '';
-        let taskBSelectedSubtopic = '';
+        let taskBAllQuestions = [];
         let taskBUsedQuestions = [];
         let taskCSelectedSection = '';
-        let taskCSelectedSubtopic = '';
+        let taskCAllQuestions = [];
         let taskCUsedQuestions = [];
         let taskATimer = 0;
         let taskBTimer = 0;
@@ -1343,7 +1343,7 @@
             speakText(questions[questionIndex].q);
         }
 
-        // Existing Task A, B, C functions remain the same
+        // Task A functions
         function initializeTaskA() {
             taskAQuestionNumber = 0;
             taskACurrentQuestions = [];
@@ -1392,18 +1392,24 @@
             }
         }
 
+        // Task B functions - UPDATED to use entire sections
         function selectTaskBTopic() {
             const availableSections = ['A', 'C', 'D', 'E'];
-            const randomSection = availableSections[Math.floor(Math.random() * availableSections.length)];
+            taskBSelectedSection = availableSections[Math.floor(Math.random() * availableSections.length)];
             
-            const subtopics = Object.keys(topics[randomSection]);
-            const randomSubtopic = subtopics[Math.floor(Math.random() * subtopics.length)];
+            // Collect ALL questions from ALL subtopics in the selected section
+            taskBAllQuestions = [];
+            const subtopics = Object.keys(topics[taskBSelectedSection]);
+            subtopics.forEach(subtopic => {
+                taskBAllQuestions = taskBAllQuestions.concat(topics[taskBSelectedSection][subtopic].questions);
+            });
             
-            taskBSelectedSection = randomSection;
-            taskBSelectedSubtopic = randomSubtopic;
+            // Calculate total number of subtopics and questions
+            const totalSubtopics = subtopics.length;
+            const totalQuestions = taskBAllQuestions.length;
             
             taskBSectionEl.textContent = taskBSelectedSection;
-            taskBTopicDetailEl.textContent = `${taskBSelectedSubtopic}: ${topics[randomSection][randomSubtopic].name}`;
+            taskBTopicDetailEl.textContent = `${taskBSelectedSection}: All ${totalSubtopics} subtopics (${totalQuestions} questions total)`;
             
             taskBUsedQuestions = [];
             taskBFinished = false;
@@ -1413,13 +1419,11 @@
         function getNextTaskBQuestion() {
             if (taskBFinished) return;
             
-            const topicQuestions = topics[taskBSelectedSection][taskBSelectedSubtopic].questions;
-            
-            if (taskBUsedQuestions.length >= topicQuestions.length) {
+            if (taskBUsedQuestions.length >= taskBAllQuestions.length) {
                 taskBUsedQuestions = [];
             }
             
-            const availableQuestions = topicQuestions.filter((_, index) => !taskBUsedQuestions.includes(index));
+            const availableQuestions = taskBAllQuestions.filter((_, index) => !taskBUsedQuestions.includes(index));
             
             if (availableQuestions.length === 0) {
                 taskBUsedQuestions = [];
@@ -1427,12 +1431,12 @@
             }
             
             const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-            const questionIndex = topicQuestions.indexOf(availableQuestions[randomIndex]);
+            const questionIndex = taskBAllQuestions.indexOf(availableQuestions[randomIndex]);
             
             taskBUsedQuestions.push(questionIndex);
             
-            taskBQuestion.textContent = topicQuestions[questionIndex].q;
-            taskBTranslation.textContent = topicQuestions[questionIndex].t;
+            taskBQuestion.textContent = taskBAllQuestions[questionIndex].q;
+            taskBTranslation.textContent = taskBAllQuestions[questionIndex].t;
             
             if (textVisible) {
                 taskBQuestion.classList.remove('text-hidden');
@@ -1444,13 +1448,14 @@
                 taskBTranslation.classList.remove('show');
             }
             
-            speakText(topicQuestions[questionIndex].q);
+            speakText(taskBAllQuestions[questionIndex].q);
         }
 
         function completeTaskBQuestion() {
             getNextTaskBQuestion();
         }
 
+        // Task C functions - UPDATED to use entire sections
         function selectTaskCTopic() {
             const availableSections = ['C', 'D', 'E'];
             
@@ -1459,14 +1464,21 @@
                 randomSection = availableSections[Math.floor(Math.random() * availableSections.length)];
             } while (randomSection === taskBSelectedSection);
             
-            const subtopics = Object.keys(topics[randomSection]);
-            const randomSubtopic = subtopics[Math.floor(Math.random() * subtopics.length)];
-            
             taskCSelectedSection = randomSection;
-            taskCSelectedSubtopic = randomSubtopic;
+            
+            // Collect ALL questions from ALL subtopics in the selected section
+            taskCAllQuestions = [];
+            const subtopics = Object.keys(topics[taskCSelectedSection]);
+            subtopics.forEach(subtopic => {
+                taskCAllQuestions = taskCAllQuestions.concat(topics[taskCSelectedSection][subtopic].questions);
+            });
+            
+            // Calculate total number of subtopics and questions
+            const totalSubtopics = subtopics.length;
+            const totalQuestions = taskCAllQuestions.length;
             
             taskCSectionEl.textContent = taskCSelectedSection;
-            taskCTopicDetailEl.textContent = `${taskCSelectedSubtopic}: ${topics[randomSection][randomSubtopic].name}`;
+            taskCTopicDetailEl.textContent = `${taskCSelectedSection}: All ${totalSubtopics} subtopics (${totalQuestions} questions total)`;
             
             taskCUsedQuestions = [];
             taskCFinished = false;
@@ -1476,13 +1488,11 @@
         function getNextTaskCQuestion() {
             if (taskCFinished) return;
             
-            const topicQuestions = topics[taskCSelectedSection][taskCSelectedSubtopic].questions;
-            
-            if (taskCUsedQuestions.length >= topicQuestions.length) {
+            if (taskCUsedQuestions.length >= taskCAllQuestions.length) {
                 taskCUsedQuestions = [];
             }
             
-            const availableQuestions = topicQuestions.filter((_, index) => !taskCUsedQuestions.includes(index));
+            const availableQuestions = taskCAllQuestions.filter((_, index) => !taskCUsedQuestions.includes(index));
             
             if (availableQuestions.length === 0) {
                 taskCUsedQuestions = [];
@@ -1490,12 +1500,12 @@
             }
             
             const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-            const questionIndex = topicQuestions.indexOf(availableQuestions[randomIndex]);
+            const questionIndex = taskCAllQuestions.indexOf(availableQuestions[randomIndex]);
             
             taskCUsedQuestions.push(questionIndex);
             
-            taskCQuestion.textContent = topicQuestions[questionIndex].q;
-            taskCTranslation.textContent = topicQuestions[questionIndex].t;
+            taskCQuestion.textContent = taskCAllQuestions[questionIndex].q;
+            taskCTranslation.textContent = taskCAllQuestions[questionIndex].t;
             
             if (textVisible) {
                 taskCQuestion.classList.remove('text-hidden');
@@ -1507,7 +1517,7 @@
                 taskCTranslation.classList.remove('show');
             }
             
-            speakText(topicQuestions[questionIndex].q);
+            speakText(taskCAllQuestions[questionIndex].q);
         }
 
         function completeTaskCQuestion() {
